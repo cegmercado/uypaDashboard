@@ -1,0 +1,44 @@
+---
+title: "Leaflet mapping exercise"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+remotes::install_github("validmeasures/uypa")
+if(!require(leaflet)) install.packages("leaflet")
+
+mapbox.street <- "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZXJuZXN0Z3VldmFycmEiLCJhIjoiejRRLXlZdyJ9.sqS1zi0rDH5CIzvcn9SXSg"
+
+mapbox.satellite <- "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZXJuZXN0Z3VldmFycmEiLCJhIjoiejRRLXlZdyJ9.sqS1zi0rDH5CIzvcn9SXSg"
+```
+
+Leaflet Exercise
+================================================================================
+
+Row {.tabset .tabset-fade}
+--------------------------------------------------------------------------------
+
+```{r leaflet}
+library(leaflet)
+library(uypa)
+
+leaflet() %>%
+  addTiles(
+        urlTemplate = mapbox.street,
+        attribution = "Map by <a href = 'http://www.mapbox.com/'>Mapbox</a>"
+      ) %>%
+      addMiniMap(tile = mapbox.satellite,
+                 toggleDisplay = TRUE) %>%
+      addMarkers(lng = diamagueneLocations$X_location_longitude,
+                 lat = diamagueneLocations$X_location_latitude,
+                 popup = create_popup_content(df = diamagueneLocations),
+                 clusterOptions = markerClusterOptions()
+      ) %>%
+      setView(lng = sp::coordinates(diamaguene)[1] + 0.005,
+              lat = sp::coordinates(diamaguene)[2] + 0.005,
+              zoom = 16
+      )
+````
